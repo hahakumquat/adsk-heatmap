@@ -211,10 +211,6 @@ Autodesk.ADN.Viewing.Extension.HeatMapFloor = function(viewer, options) {
                 type: 'v2',
                 value: new THREE.Vector2(_bounds.min.x, _bounds.min.y)
             },
-            z: {
-                type: 'f',
-                value: _bounds.max.z
-            }, 
             width: {
                 type: 'f',
                 value: _bounds.width

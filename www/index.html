@@ -48,19 +48,14 @@
          uniform float width;
          uniform float height;
          uniform vec2 corner;
-         uniform float z;
          varying vec2 vUv;
 
          void main() {
-             // project onto xy-plane
-             /* vec3 projectOn = vec3(position.x, position.y, 0.);
-              * float scalar = dot(projectOn, position) / length(projectOn);
-              * vec3 projection = scalar * normalize(projectOn);*/
-
+             
              vec3 projection = vec3(position.x, position.y, 0.);
 
-             vUv = vec2(abs(projection.x /* - corner.x */) / width,
-                        (height - abs(projection.y /* + corner.y */ )) / height);
+             vUv = vec2((projection.x) / width + 0.05,
+                        (height + projection.y) / height - 0.1);
              
              gl_Position = projectionMatrix * 
              modelViewMatrix * 
