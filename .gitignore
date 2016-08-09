@@ -38,4 +38,3 @@ Thumbs.db
 *.bak
 
 .env
-credentials.js

@@ -15,6 +15,8 @@
 // DOES NOT WARRANT THAT THE OPERATION OF THE PROGRAM WILL BE
 // UNINTERRUPTED OR ERROR FREE.
 /////////////////////////////////////////////////////////////////////////////////
+var env = require("node-env-file");
+env(__dirname + '/.env');
 var favicon = require('serve-favicon');
 var api = require('./routes/api');
 var express = require('express');

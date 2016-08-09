@@ -56,25 +56,12 @@ Autodesk.ADN.Viewing.Extension.HeatMapFloor = function(viewer, options) {
         _texture = genTexture();
         _material = genMaterial();
 
-        // _plane = clonePlane();
         setMaterial(roofFrag, _material);
         
         animate();
 
         console.log("Heat Map Floor loaded.");
         return true;
-    }
-
-    // debugging: draws a sphere at a location
-    function mark(width, height, z, color) {
-        var asdfg = new THREE.SphereGeometry(0.1, 15);
-        var asdfmat = new THREE.MeshBasicMaterial({
-            color: color
-        });
-        _viewer.impl.matman().addMaterial(ctr, asdfmat, true);
-        var asdfmesh = new THREE.Mesh(asdfg, asdfmat);
-        asdfmesh.position.set(width, height, z);
-        _viewer.impl.scene.add(asdfmesh);
     }
     
     _self.unload = function() {
@@ -114,24 +101,11 @@ Autodesk.ADN.Viewing.Extension.HeatMapFloor = function(viewer, options) {
 
     /* Geometry/Fragment/Location functions */
 
-    /*************************************************************************
-
-     * Here might be the error. This should find the bounding box of the roof.
-     * Also finds the minim
-     * But the marks are in the correct expected locations on the model.
-     * This is used in shaderMaterial to specify scaling factors (width, height)
-
-    *************************************************************************/
-
     // Gets bounds of a fragment
     function genBounds(fragId) {
         var bBox = new THREE.Box3();        
         _viewer.model.getFragmentList()
             .getWorldBounds(fragId, bBox);
-
-        // TODO: debugging
-        mark(bBox.max.x, bBox.max.y, bBox.max.z, ctr++);
-        mark(bBox.min.x, bBox.min.y, bBox.min.z, ctr++);
         
         var width = Math.abs(bBox.max.x - bBox.min.x);
         var height = Math.abs(bBox.max.y - bBox.min.y);
@@ -194,19 +168,10 @@ Autodesk.ADN.Viewing.Extension.HeatMapFloor = function(viewer, options) {
         var material;
 
         // shader uniforms
-        // OFFSET_X and Y are texture shifts
         // corner is the vertex UV mapped to (0, 0)
         // width and height are fragment size
         // tex is texture
         var uniforms = {
-            // OFFSET_X: {
-            //     type: 'f',
-            //     value: 0.05
-            // },
-            // OFFSET_Y: {
-            //     type: 'f',
-            //     value: 0.1
-            // }, 
             corner: {
                 type: 'v2',
                 value: new THREE.Vector2(_bounds.min.x, _bounds.min.y)
@@ -232,13 +197,6 @@ Autodesk.ADN.Viewing.Extension.HeatMapFloor = function(viewer, options) {
             side: THREE.DoubleSide
         });
 
-        // If an alpha texture of the surface exists,
-        // then this works with a PlaneGeometry
-        // material = new THREE.MeshBasicMaterial({
-        //     map: _texture,
-        //     side: THREE.DoubleSide,
-        //     alphaMap: THREE.ImageUtils.loadTexture("mask.png")
-        // });
         material.transparent = true;
 
         // register the material under the name "heatmap"
@@ -251,62 +209,9 @@ Autodesk.ADN.Viewing.Extension.HeatMapFloor = function(viewer, options) {
 
     /* Rendering the heatmap in the Viewer */
 
-    // copies a fragment and moves it elsewhere
-    function clonePlane() {
-
-        // To use native three.js plane, use the following mesh constructor
-        geom = new THREE.PlaneGeometry(_bounds.width, _bounds.height);
-        plane = new THREE.Mesh(geom, _material);
-        plane.position.set(0, 0, _bounds.max.z);
-
-        // // get the geometry information from the render proxy
-        // var renderProxy = _viewer.impl.getRenderProxy(_viewer.model, roofFrag);
-        // var geom = renderProxy.geometry;
-        
-        // plane = new THREE.Mesh(geom, _viewer.impl.getRenderProxy(_viewer.model, roofFrag).material);
-
-        // // copies and positions the plane to be a clone of the roof
-        // plane.matrix.copy(renderProxy.matrixWorld);
-        // plane.matrixWorldNeedsUpdate = true;
-        // plane.matrixAutoUpdate = false;
-        // plane.frustumCulled = false;
-
-        // // shifts THE ORIGINAL plane
-        // var fragProxy = _viewer.impl.getFragmentProxy(_viewer.model, roofFrag);
-        // fragProxy.getAnimTransform();
-        
-        // var offset = {
-
-        //     x: 0 - fragProxy.position.x,
-        //     y: 0 - fragProxy.position.y,
-        //     z: Z_POS - fragProxy.position.z
-        // };
-
-        // fragProxy.offset = offset;
-
-        // var position = new THREE.Vector3(
-        //     - fragProxy.offset.x,
-        //     - fragProxy.offset.y,
-        //     - fragProxy.offset.z);
-
-        // fragProxy.position = position;
-
-        // fragProxy.updateAnimTransform();
-
-        // creates a shiny overlay effect
-        _viewer.impl.addOverlay("pivot", plane);
-
-        return plane;
-    }
-
     // directly sets the material of a fragId
     function setMaterial(fragId, material) {
 
-        var renderProxy = _viewer.impl.getRenderProxy(
-            _viewer.model,
-            roofFrag);
-        var geom = renderProxy.geometry;
-        
         _viewer.model.getFragmentList().setMaterial(fragId, material);
         _viewer.impl.invalidate(true);
     }

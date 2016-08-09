@@ -51,11 +51,13 @@
          varying vec2 vUv;
 
          void main() {
+             float OFFSET_X = 0.05;
+             float OFFSET_Y = 0.1;
              
              vec3 projection = vec3(position.x, position.y, 0.);
 
-             vUv = vec2((projection.x) / width + 0.05,
-                        (height + projection.y) / height - 0.1);
+             vUv = vec2((projection.x) / width + OFFSET_X,
+                        (height + projection.y) / height - OFFSET_Y);
              
              gl_Position = projectionMatrix * 
              modelViewMatrix * 
@@ -70,12 +72,7 @@
          varying vec2 vUv;
 
          void main() {
-             if (vUv.x < 0. || vUv.y < 0.)
-                 gl_FragColor = vec4(1., 1., 1., 1.);
-             else if (vUv.x > 1. || vUv.y > 1.)
-                 gl_FragColor = vec4(0., 0., 0., 1.);
-             else
-                 gl_FragColor = texture2D(tex, vUv);
+             gl_FragColor = texture2D(tex, vUv);
          }
         </script>
         <div id="viewerDiv"></div>
